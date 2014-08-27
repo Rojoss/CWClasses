@@ -1,21 +1,16 @@
-package com.clashwars.cwclasses.classes.internal;
+package com.clashwars.cwclasses.classes;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.Class;
 
 import org.bukkit.ChatColor;
 
-import com.clashwars.cwclasses.classes.Archer;
-import com.clashwars.cwclasses.classes.Guardian;
-import com.clashwars.cwclasses.classes.Rogue;
-import com.clashwars.cwclasses.classes.Warrior;
-
 public enum ClassType {
-	WARRIOR(0, "Warrior", ChatColor.DARK_RED, Warrior.class, "ability1", "ability2", "etc"),
-	ARCHER(1, "Archer", ChatColor.DARK_GREEN, Archer.class),
-	GUARDIAN(2, "Guardian", ChatColor.DARK_AQUA, Guardian.class),
-	ROGUE(3, "Rogue", ChatColor.DARK_GRAY, Rogue.class);
+	UNKNOWN(0, "Unknown", ChatColor.WHITE),
+	WARRIOR(1, "Warrior", ChatColor.DARK_RED, "ability1", "ability2", "etc"),
+	ARCHER(2, "Archer", ChatColor.DARK_GREEN),
+	GUARDIAN(3, "Guardian", ChatColor.DARK_AQUA),
+	ROGUE(4, "Rogue", ChatColor.DARK_GRAY);
 	
 	
 	//Vars
@@ -23,16 +18,14 @@ public enum ClassType {
 	private int id;
 	private String name;
 	private ChatColor color;
-	private Class<? extends ClassClass> clazz;
 	private String[] abilities;
 	
 	
 	//Constructor
-	private ClassType (int id, String name, ChatColor color, Class<? extends ClassClass> clazz, String... abilities) {
+	private ClassType (int id, String name, ChatColor color, String... abilities) {
 		this.id = id;
 		this.name = name;
 		this.color = color;
-		this.clazz = clazz;
 		this.abilities = abilities;
 	}
 	
@@ -58,11 +51,6 @@ public enum ClassType {
 	//Get color
 	public ChatColor getColor() {
 		return color;
-	}
-	
-	//Get the class Class
-	public Class<? extends ClassClass> getClassClass() {
-		return clazz;
 	}
 	
 	//Get abilities
