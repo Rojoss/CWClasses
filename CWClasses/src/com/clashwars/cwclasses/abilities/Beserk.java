@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -15,11 +16,10 @@ import com.clashwars.cwclasses.abilities.internal.AbilityType;
 import com.clashwars.cwclasses.abilities.internal.Scalable;
 import com.clashwars.cwclasses.utils.Util;
 
-public class Beserk implements AbilityClass {
+public class Beserk implements AbilityClass,Listener {
 	HashMap<String, Scalable> scales = new HashMap<String, Scalable>();
 	
-	@Override
-	public void init() {
+	public Beserk() {
 		scales.put("duration", new Scalable(0, 100, 40, 200));
 	}
 	

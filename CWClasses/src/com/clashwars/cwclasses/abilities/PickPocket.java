@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -22,11 +23,10 @@ import com.clashwars.cwclasses.abilities.internal.Scalable;
 import com.clashwars.cwclasses.utils.CooldownManager.Cooldown;
 import com.clashwars.cwclasses.utils.Util;
 
-public class PickPocket implements AbilityClass {
+public class PickPocket implements AbilityClass,Listener {
 	HashMap<String, Scalable> scales = new HashMap<String, Scalable>();
 	
-	@Override
-	public void init() {
+	public PickPocket() {
 		scales.put("chance", new Scalable(0, 100, 1, 15));
 	}
 	

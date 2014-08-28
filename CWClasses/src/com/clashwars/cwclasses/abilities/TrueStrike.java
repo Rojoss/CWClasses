@@ -21,8 +21,7 @@ public class TrueStrike implements AbilityClass,Listener {
 
 	HashMap<String, Scalable> scales = new HashMap<String, Scalable>();
 	
-	@Override
-	public void init() {
+	public TrueStrike() {
 		scales.put("chance", new Scalable(0, 50, 1, 20));
 	}
 	

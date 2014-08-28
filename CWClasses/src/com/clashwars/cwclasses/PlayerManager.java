@@ -74,7 +74,7 @@ public class PlayerManager {
 				//New player with no data in the database yet.
 				try {
 					Statement statement2 = cwc.getSql().createStatement();
-					statement2.executeUpdate("INSERT INTO Players (UUID, ItemCategory, UUID, Name) VALUES ('" + uuid.toString() + "', '" + player.getName() + "');");
+					statement2.executeUpdate("INSERT INTO Players (UUID, Name, ActiveClass, ClassExp) VALUES ('" + uuid.toString() + "', '" + player.getName() + "', '', '');");
 				} catch (SQLException e) {
 					player.sendMessage(Util.formatMsg("&cError connecting to the databse. Can't create class data."));
 					e.printStackTrace();

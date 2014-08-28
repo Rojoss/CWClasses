@@ -8,7 +8,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 
+import com.clashwars.cwclasses.abilities.internal.AbilityType;
 import com.clashwars.cwclasses.bukkit.CWClassesPlugin;
+import com.clashwars.cwclasses.bukkit.events.ExpEvents;
 import com.clashwars.cwclasses.bukkit.events.MainEvents;
 import com.clashwars.cwclasses.commands.Commands;
 import com.clashwars.cwclasses.config.Config;
@@ -42,7 +44,6 @@ public class CWClasses {
 		mainCfg.save();
 		
 		//TODO: save class data of all online CWPlayers.
-		
 		getServer().getScheduler().cancelTasks(getPlugin());
 
 		log("Disabled.");
@@ -59,7 +60,17 @@ public class CWClasses {
 
 		SqlInfo sqli = cfg.getSqlInfo();
 		sql = new MySql(this, sqli.getAddress(), sqli.getPort(), sqli.getDb(), sqli.getUser(), sqli.getPass());
+		if (sql == null) {
+			log("Can't conntact to database!");
+			getPlugin().getPluginLoader().disablePlugin(getPlugin());
+			return;
+		}
 		c = sql.openConnection();
+		if (c == null) {
+			log("Can't conntact to database!");
+			getPlugin().getPluginLoader().disablePlugin(getPlugin());
+			return;
+		}
 		//TODO: create table...
 		//sql.createTable("players", true, playerStructure);
 
@@ -67,8 +78,7 @@ public class CWClasses {
 		playerManager.populate();
 
 		cmds = new Commands(this);
-		cmds.populateCommands();
-
+		
 		//getServer().getScheduler().runTaskTimerAsynchronously(getPlugin(), (sus = new SqlUpdateSchedule(this)), 0, 15L);
 		registerEvents();
 		log("Successfully enabled.");
@@ -77,10 +87,15 @@ public class CWClasses {
 	private void registerEvents() {
 		PluginManager pm = getPlugin().getServer().getPluginManager();
 		pm.registerEvents(new MainEvents(this), getPlugin());
+		pm.registerEvents(new ExpEvents(this), getPlugin());
+		for (AbilityType ability : AbilityType.values()) {
+			if (ability.getAbilitClass() != null)
+				pm.registerEvents(ability.getAbilitClass(), getPlugin());
+		}
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		return cmds.executeCommand(sender, label, args);
+		return cmds.onCommand(sender, cmd, label, args);
 	}
 
 	public void log(Object msg) {

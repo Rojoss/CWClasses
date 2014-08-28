@@ -59,9 +59,10 @@ public class ClassExp {
 		levelProgression = calculateLevelProgression();
 		expToNextLevel = calculateExpToNextLevel();
 		if (prevLevel != level) {
+			Bukkit.broadcastMessage("Prev lvl: " + prevLevel + " new: " + level);
 			//Call custom ClassLevelupEvent
-			ClassLevelupEvent e = new ClassLevelupEvent(cwp);
-			Bukkit.getServer().getPluginManager().callEvent(e);
+			//ClassLevelupEvent e = new ClassLevelupEvent(cwp);
+			//Bukkit.getServer().getPluginManager().callEvent(e);
 		}
 	}
 	public int calculateLevel() {
@@ -69,6 +70,7 @@ public class ClassExp {
 	}
 
 	public double calculateLevelProgression() {
+		Bukkit.broadcastMessage("Calculating level progression total XP: " + exp + " Level: " + getLevel());
 		return exp - calculateExpForLevel(getLevel() - 1);
 	}
 
@@ -77,6 +79,7 @@ public class ClassExp {
 	}
 
 	public int calculateExpForLevel(int level) {
+		Bukkit.broadcastMessage("Calculating xp for level " + level + " result: " + (int) Math.ceil(Math.pow(Math.E, (level - defaultGap) / expGap) - offset));
 		return (int) Math.ceil(Math.pow(Math.E, (level - defaultGap) / expGap) - offset);
 	}
 	
@@ -126,8 +129,7 @@ public class ClassExp {
 	
 	
 	//Custom ClassLevelupEvent.
-	public final static class ClassLevelupEvent extends Event {
-		private static final HandlerList handlers = new HandlerList();
+	public static class ClassLevelupEvent extends Event {
 		private CWPlayer cwp;
 		
 	    public ClassLevelupEvent(CWPlayer cwp) {
@@ -138,8 +140,13 @@ public class ClassExp {
 	    	return cwp;
 	    }
 
-		public HandlerList getHandlers() {
-			return handlers;
-		}
+	    private static final HandlerList handlers = new HandlerList();
+	    @Override
+	    public HandlerList getHandlers() {
+	        return handlers;
+	    }
+	    public static HandlerList getHandlerList() {
+	        return handlers;
+	    }
 	}
 }

@@ -1,16 +1,9 @@
 package com.clashwars.cwclasses.commands;
 
-import static org.bukkit.ChatColor.DARK_GRAY;
-import static org.bukkit.ChatColor.DARK_RED;
-import static org.bukkit.ChatColor.GOLD;
-import static org.bukkit.ChatColor.RED;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,106 +11,117 @@ import com.clashwars.cwclasses.CWClasses;
 import com.clashwars.cwclasses.CWPlayer;
 import com.clashwars.cwclasses.ClassExp;
 import com.clashwars.cwclasses.classes.ClassType;
-import com.clashwars.cwclasses.utils.Util;
 import com.clashwars.cwclasses.utils.CooldownManager.Cooldown;
+import com.clashwars.cwclasses.utils.Util;
 
 public class Commands {
 	private CWClasses			cwc;
-	private final List<Method>	commands	= new ArrayList<Method>();
-	private final String		pf			= DARK_GRAY + "[" + DARK_RED + "CW" + DARK_GRAY + "] " + GOLD;
 
 	public Commands(CWClasses cwc) {
 		this.cwc = cwc;
 	}
 
-	/* Start of commands */
-
-	@SuppressWarnings("deprecation")
-	@Command(permissions = {}, aliases = { "class" })
-	public boolean skill(CommandSender sender, String label, String argument, String... args) {
-		UUID uuid = null;
-
-		if (args.length < 2) {
-			if (!(sender instanceof Player)) {
-				sender.sendMessage(Util.formatMsg("&cSpecify a player to use this on the console."));
-				return true;
-			}
-
-			uuid = ((Player) sender).getUniqueId();
-		} else {
-			if (!sender.hasPermission("cwclasses.class.other") && !sender.isOp()) {
-				sender.sendMessage(Util.formatMsg("&cInsufficient permissions."));
-				return true;
-			}
-
-			Player player = cwc.getServer().getPlayer(args[1]);
-			uuid = (player != null ? player.getUniqueId() : UUID.fromString(args[1]));
-		}
-
-		if (uuid == null) {
-			sender.sendMessage(Util.formatMsg("&cInvalid player."));
-			return true;
-		}
+	
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
-		CWPlayer cwp = cwc.getPlayerManager().getOrCreatePlayer(uuid);
-		ClassType ac = cwp.getActiveClass();
-		if (ac == null || ac == ClassType.UNKNOWN) {
-			sender.sendMessage(Util.integrateColor("&8===== &&4&lClass Info &8====="));
-			sender.sendMessage(Util.integrateColor("&cYou have no active class!"));
-			sender.sendMessage(Util.integrateColor("&cGo to spawn and interact with one of the class npc's."));
-			return true;
-		}
-		
-		ClassExp cxp = cwp.getExpClass();
-		sender.sendMessage(Util.integrateColor("&8===== &&4&lClass Info &7[" + ac.getColor() + ac.getName() + "&7] &8====="));
-		sender.sendMessage(Util.integrateColor("&6Level&8: &5" + cxp.getLevel()));
-		sender.sendMessage(Util.integrateColor("&6Total Exp&8: &5" + cxp.getExp()));
-		sender.sendMessage(Util.integrateColor("&6Exp&8: &a" + cxp.getLevelProgression() + "&7/&2" + cxp.calculateExpForLevel(cxp.getLevel())));
-		sender.sendMessage(Util.integrateColor("&6Level progress&8: &5" + cxp.getLevelPercentage() + "%"));
-		return true;
-	}
+		/*  /class [player]  */
+		if (label.equalsIgnoreCase("class")) {
+			UUID uuid = null;
 
-	@Command(permissions = {}, aliases = { "switch" })
-	public boolean switchCommand(CommandSender sender, String label, String argument, String... args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Util.formatMsg("&cThis is a player only command."));
-			return true;
-		}
-
-		Player player = (Player) sender;
-		CWPlayer cwp = cwc.getPlayerManager().getOrCreatePlayer(player.getUniqueId());
-		
-		if (args.length == 0) {
-			if (cwp.getActiveClass() == null || cwp.getActiveClass() == ClassType.UNKNOWN) {
-				sender.sendMessage(Util.formatMsg("&cYou have no active class."));
-			} else {
-				sender.sendMessage(Util.formatMsg("&6Active class&8: &4" + cwp.getActiveClass().getColor() + cwp.getActiveClass().getName()));
-			}
-			String classNames = "";
-			for (ClassType c : ClassType.values()) {
-				if (c != ClassType.UNKNOWN) {
-					classNames += c.getColor() + c.getName();
+			if (args.length < 2) {
+				if (!(sender instanceof Player)) {
+					sender.sendMessage(Util.formatMsg("&cSpecify a player to use this on the console."));
+					return true;
 				}
+
+				uuid = ((Player) sender).getUniqueId();
+			} else {
+				if (!sender.hasPermission("cwclasses.class.other") && !sender.isOp()) {
+					sender.sendMessage(Util.formatMsg("&cInsufficient permissions."));
+					return true;
+				}
+
+				Player player = cwc.getServer().getPlayer(args[1]);
+				uuid = (player != null ? player.getUniqueId() : UUID.fromString(args[1]));
 			}
-			sender.sendMessage(Util.formatMsg("&7Command usage&8: &5/switch &8[" + classNames + "&8]"));
+
+			if (uuid == null) {
+				sender.sendMessage(Util.formatMsg("&cInvalid player."));
+				return true;
+			}
+			
+			CWPlayer cwp = cwc.getPlayerManager().getOrCreatePlayer(uuid);
+			ClassType ac = cwp.getActiveClass();
+			if (ac == null || ac == ClassType.UNKNOWN) {
+				sender.sendMessage(Util.integrateColor("&8===== &&4&lClass Info &8====="));
+				sender.sendMessage(Util.integrateColor("&cYou have no active class!"));
+				sender.sendMessage(Util.integrateColor("&cGo to spawn and interact with one of the class npc's."));
+				return true;
+			}
+			
+			ClassExp cxp = cwp.getExpClass();
+			sender.sendMessage(Util.integrateColor("&8===== &&4&lClass Info &7[" + ac.getColor() + ac.getName() + "&7] &8====="));
+			sender.sendMessage(Util.integrateColor("&6Level&8: &5" + cxp.getLevel()));
+			sender.sendMessage(Util.integrateColor("&6Total Exp&8: &5" + cxp.getExp()));
+			sender.sendMessage(Util.integrateColor("&6Exp&8: &a" + cxp.getLevelProgression() + "&7/&2" + cxp.calculateExpForLevel(cxp.getLevel())));
+			sender.sendMessage(Util.integrateColor("&6Level progress&8: &5" + cxp.getLevelPercentage() + "%"));
 			return true;
 		}
 		
-		ClassType ct = ClassType.fromString(args[1]);
-    	if (ct != null && ct != ClassType.UNKNOWN) {
-    		Cooldown cd = cwp.getCDM().getCooldown("ClassSwitch");
-    		if (cd != null && cd.onCooldown()) {
-    			long timeLeft = cwp.getCDM().getCooldown("ClassSwitch").getTimeLeft();
-    			sender.sendMessage(Util.formatMsg("&cYou can't switch yet. &8Cooldown: &7" + Util.getMinSecStr(timeLeft, ChatColor.GRAY, ChatColor.DARK_GRAY)));
-    			return true;
-    		}
-    		cwp.setActiveClass(ct);
-    		cwp.getCDM().createCooldown("ClassSwitch", 3599000);
-    		sender.sendMessage(Util.formatMsg("&6Your new active class is now " + ct.getColor() + ct.getName() + "&6!"));
-        }
-		return true;
-	}
+		/*  /switch [className]  */
+		if (label.equalsIgnoreCase("switch")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(Util.formatMsg("&cThis is a player only command."));
+				return true;
+			}
 
+			Player player = (Player) sender;
+			CWPlayer cwp = cwc.getPlayerManager().getOrCreatePlayer(player.getUniqueId());
+			
+			if (args.length == 0) {
+				if (cwp.getActiveClass() == null || cwp.getActiveClass() == ClassType.UNKNOWN) {
+					sender.sendMessage(Util.formatMsg("&cYou have no active class."));
+				} else {
+					sender.sendMessage(Util.formatMsg("&6Active class&8: &4" + cwp.getActiveClass().getColor() + cwp.getActiveClass().getName()));
+				}
+				String classNames = "";
+				for (ClassType c : ClassType.values()) {
+					if (c != ClassType.UNKNOWN) {
+						classNames += c.getColor() + c.getName();
+					}
+				}
+				sender.sendMessage(Util.formatMsg("&7Command usage&8: &5/switch &8[" + classNames + "&8]"));
+				return true;
+			}
+			
+			ClassType ct = ClassType.fromString(args[0]);
+	    	if (ct != null && ct != ClassType.UNKNOWN) {
+	    		Cooldown cd = cwp.getCDM().getCooldown("ClassSwitch");
+	    		if (cd != null && cd.onCooldown()) {
+	    			long timeLeft = cwp.getCDM().getCooldown("ClassSwitch").getTimeLeft();
+	    			sender.sendMessage(Util.formatMsg("&cYou can't switch yet. &8Cooldown: &7" + Util.getMinSecStr(timeLeft, ChatColor.GRAY, ChatColor.DARK_GRAY)));
+	    			return true;
+	    		}
+	    		cwp.setActiveClass(ct);
+	    		cwp.getCDM().createCooldown("ClassSwitch", 3599000);
+	    		sender.sendMessage(Util.formatMsg("&6Your new active class is now " + ct.getColor() + ct.getName() + "&6!"));
+	        }
+			return true;
+		}
+		
+		
+		/*  /switch [className]  */
+		if (label.equalsIgnoreCase("classes")) {
+			cwc.getMainConfig().load();
+			sender.sendMessage(Util.formatMsg("&6Reloaded."));
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/*
 	@Command(permissions = { "cwclasses.classes.givexp" }, aliases = { "classes" }, secondaryAliases = { "givexp", "giveexp", "giveexperience", "givexperience", "gxp" })
 	public boolean classes_giveXP(CommandSender sender, String label, String argument, String... args) {
 		if (args.length < 1) {
@@ -167,9 +171,10 @@ public class Commands {
 
 		cp.incrementExp(clazz, exp);
 		sender.sendMessage(pf + "Successfully gave " + exp + " experience.");
-		*/
+		
 		return true;
 	}
+	
 
 	@Command(permissions = { "cwclasses.classes.takexp" }, aliases = { "classes" }, secondaryAliases = { "takexp", "takeexp", "takeexperience", "takexperience", "txp" })
 	public boolean classes_takeXP(CommandSender sender, String label, String argument, String... args) {
@@ -220,9 +225,9 @@ public class Commands {
 
 		cp.decrementExp(clazz, exp);
 		sender.sendMessage(pf + "Successfully took " + exp + " experience.");
-		*/
 		return true;
 	}
+
 
 	@Command(permissions = { "cwclasses.classes.reload" }, aliases = { "classes" }, secondaryAliases = { "reload" })
 	public boolean classes_reload(CommandSender sender, String label, String argument, String... args) {
@@ -230,8 +235,10 @@ public class Commands {
 		sender.sendMessage(pf + "Reloaded.");
 		return true;
 	}
+	*/
 
 	/* End of commands */
+	/*
 	public void populateCommands() {
 		commands.clear();
 
@@ -263,8 +270,11 @@ public class Commands {
 								sender.sendMessage(pf + RED + "Insufficient permissions.");
 								return true;
 							}
-
-							return (Boolean) method.invoke(this, sender, lbl, null, args);
+							try {
+								return (Boolean) method.invoke(this, sender, lbl, null, args);
+							} catch (InvocationTargetException e) {
+								continue;
+							}
 						}
 
 						if (args.length <= 0) {
@@ -284,7 +294,11 @@ public class Commands {
 									return true;
 								}
 
-								return (Boolean) method.invoke(this, sender, lbl, args[0], Util.trimFirst(args));
+								try {
+									return (Boolean) method.invoke(this, sender, lbl, args[0], Util.trimFirst(args));
+								} catch (InvocationTargetException e) {
+									continue;
+								}
 							}
 						}
 					}
@@ -298,10 +312,11 @@ public class Commands {
 			sender.sendMessage(GOLD + "/cws del <type> [object.][var]" + DARK_GRAY + " - " + GRAY + "Delete a var/object.");
 			sender.sendMessage(GOLD + "/cws run <file:script> [player]" + DARK_GRAY + " - " + GRAY + "Force run a script.");
 			sender.sendMessage(GOLD + "/cws reload <type> [args]" + DARK_GRAY + " - " + GRAY + "Reload scripts and configs.");
-			sender.sendMessage(GOLD + "/cws save" + DARK_GRAY + " - " + GRAY + "Save scripts and configs.");*/
+			sender.sendMessage(GOLD + "/cws save" + DARK_GRAY + " - " + GRAY + "Save scripts and configs.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return true;
-	}
+		
+	}*/
 }

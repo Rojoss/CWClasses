@@ -1,0 +1,12 @@
+name: CWClasses
+main: com.clashwars.cwclasses.bukkit.CWClassesPlugin
+version: '1.0'
+author: ClashWars
+description: ClashWars Classes plugin
+commands:
+  class:
+    description: Show class information
+    usage: /<command> [player]
+  switch:
+    description: Switch between classes.
+    usage: /<command> [className]

@@ -31,6 +31,8 @@ public class Scalable {
 	//scaled
 	public Scalable(int minLvl, int maxLvl, int minVal, int maxVal) {
 		this.minLvl = minLvl;
+		this.maxLvl = maxLvl;
+		this.minVal = minVal;
 		this.maxVal = maxVal;
 		isScale = true;
 	}

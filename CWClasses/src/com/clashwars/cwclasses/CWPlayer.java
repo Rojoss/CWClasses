@@ -93,34 +93,36 @@ public class CWPlayer {
 	
 	//Update the cached exp from database. Put null to directly get it from the database.
 	public void updateExp(String expStr, boolean updateClassExp, boolean override) {
-		// Archer:123; Warrior:12; etc
-		//If str is null get the string from database.
-		if (expStr == null || expStr.isEmpty()) {
-			try {
-				Statement statement = cwc.getSql().createStatement();
-				ResultSet res = statement.executeQuery("SELECT ClassExp FROM Players WHERE UUID='" + getUUID().toString() + "';");
-				
-				while (res.next()) {
-					expStr = res.getString("ClassExp");
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}			
-		}
-		//Split the string etc.
-		String[] split1 = expStr.split("; ");
-		String[] split2;
-		for (int i = 0; i < split1.length; i++) {
-			split2 = split1[i].split(":");
-			if (split2.length > 1) {
-				//Put the xp in cached map with last known values.
-				if (override || !exp.containsKey(split2[0])) {
-					exp.put(split2[0], (Double)Double.parseDouble(split2[1]));
+		if (activeClass != null && activeClass != ClassType.UNKNOWN) {
+			// Archer:123; Warrior:12; etc
+			//If str is null get the string from database.
+			if (expStr == null || expStr.isEmpty()) {
+				try {
+					Statement statement = cwc.getSql().createStatement();
+					ResultSet res = statement.executeQuery("SELECT ClassExp FROM Players WHERE UUID='" + getUUID().toString() + "';");
+					
+					while (res.next()) {
+						expStr = res.getString("ClassExp");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}			
+			}
+			//Split the string etc.
+			String[] split1 = expStr.split("; ");
+			String[] split2;
+			for (int i = 0; i < split1.length; i++) {
+				split2 = split1[i].split(":");
+				if (split2.length > 1) {
+					//Put the xp in cached map with last known values.
+					if (override || !exp.containsKey(split2[0])) {
+						exp.put(split2[0], (Double)Double.parseDouble(split2[1]));
+					}
 				}
 			}
-		}
-		if (updateClassExp) {
-			cExp.setExp(exp.get(activeClass.getName()));
+			if (updateClassExp) {
+				cExp.setExp(exp.get(activeClass.getName()));
+			}
 		}
 	}
 	

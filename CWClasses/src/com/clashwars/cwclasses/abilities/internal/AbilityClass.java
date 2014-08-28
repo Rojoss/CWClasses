@@ -2,14 +2,9 @@ package com.clashwars.cwclasses.abilities.internal;
 
 import java.util.HashMap;
 
-import com.clashwars.cwclasses.CWPlayer;
+import org.bukkit.event.Listener;
 
-public interface AbilityClass {
-	
-	public void init();
-	default boolean run(CWPlayer player) {
-		return false;
-	}
+public interface AbilityClass extends Listener {
 	
 	default AbilityType getType() {
 		return AbilityType.UNKNOWN;
