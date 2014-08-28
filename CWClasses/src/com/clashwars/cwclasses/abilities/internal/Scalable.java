@@ -5,17 +5,17 @@ public class Scalable {
 	private int minLvl;
 	private int maxLvl;
 	
-	private float percent;
-	private float minPercent;
-	private float maxPercent;
+	private int val;
+	private int minVal;
+	private int maxVal;
 	
 	private boolean isScale = false; 
 	
 	
 	//Non scaled
-	public Scalable(int lvl, float percent) {
+	public Scalable(int lvl, int val) {
 		this.lvl = lvl;
-		this.percent = percent;
+		this.val = val;
 		isScale = false;
 	}
 	
@@ -23,15 +23,15 @@ public class Scalable {
 		return lvl;
 	}
 	
-	public float getPercentage() {
-		return percent;
+	public int getPercentage() {
+		return val;
 	}
 	
 	
 	//scaled
-	public Scalable(int minLvl, int maxLvl, float minPercent, float maxPercent) {
+	public Scalable(int minLvl, int maxLvl, int minVal, int maxVal) {
 		this.minLvl = minLvl;
-		this.maxLvl = maxLvl;
+		this.maxVal = maxVal;
 		isScale = true;
 	}
 	
@@ -43,12 +43,16 @@ public class Scalable {
 		return maxLvl;
 	}
 	
-	public float getMinPercentage() {
-		return minPercent;
+	public int getMinValue() {
+		return minVal;
 	}
 	
-	public float getMaxPercentage() {
-		return maxPercent;
+	public int getMaxValue() {
+		return maxVal;
+	}
+	
+	public int getValueAtLevel(int level) {  
+		return Math.round(minVal + ((maxVal - minVal) / (maxLvl - minLvl)) * (level- minLvl));
 	}
 	//End
 	

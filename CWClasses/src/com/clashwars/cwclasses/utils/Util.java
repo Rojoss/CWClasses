@@ -2,11 +2,18 @@ package com.clashwars.cwclasses.utils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.ChatColor;
 
 public class Util {
+	
+	private static Random random;
 
+	static {
+		random = new Random();
+	}
+	
 	//Format a message
 	public static String formatMsg(String msg) {
 		return integrateColor("&8[&4CW Classes&8] &6" + msg);
@@ -61,5 +68,28 @@ public class Util {
 		String[] split = loreStr.split("\n");
 		lore = Arrays.asList(split);
 		return lore;
+	}
+	
+	//Convert a long time in ms to a formatted string min:sec
+	public static String getMinSecStr(long time) {
+		return getMinSecStr(time, null, null);
+	}
+	public static String getMinSecStr(long time, ChatColor timeColor, ChatColor color) {
+		time = time / 1000;
+		int minsLeft = (int) time / 60;
+		int secsLeft = (int) time - minsLeft * 60;
+		if (color == null || timeColor == null) {
+			return minsLeft + ":" + secsLeft;
+		} else {
+			return "" + timeColor + minsLeft + color + ":" + timeColor + secsLeft;
+		}
+	}
+	
+	public static int random(int start, int end) {
+		return start + random.nextInt(end - start + 1);
+	}
+	
+	public static boolean checkChance(int percentage) {
+		return percentage >= random(0,100);
 	}
 }

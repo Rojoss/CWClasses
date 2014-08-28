@@ -40,6 +40,9 @@ public class CWClasses {
 	public void onDisable() {
 		instance = null;
 		mainCfg.save();
+		
+		//TODO: save class data of all online CWPlayers.
+		
 		getServer().getScheduler().cancelTasks(getPlugin());
 
 		log("Disabled.");

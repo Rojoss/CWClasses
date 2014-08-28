@@ -11,7 +11,26 @@ import com.clashwars.cwclasses.classes.ClassType;
 
 public enum AbilityType {
 	UNKNOWN(0, "Unknown", ChatColor.WHITE, ClassType.UNKNOWN, AbilityClass.class),
-	TRUESTRIKE(1, "TrueStrike", ChatColor.AQUA, ClassType.ARCHER, TrueStrike.class);
+	//Archer
+	TRUESTRIKE(1, "TrueStrike", ChatColor.AQUA, ClassType.ARCHER, TrueStrike.class),
+	FROSTARROW(2, "FrostArrow", ChatColor.DARK_AQUA, ClassType.ARCHER, FrostArrow.class),
+	BACKFLIP(3, "Backflip", ChatColor.GREEN, ClassType.ARCHER, Backflip.class),
+	REPEL(4, "Repel", ChatColor.YELLOW, ClassType.ARCHER, Repel.class),
+	//Warrior
+	BESERK(1, "Beserk", ChatColor.DARK_RED, ClassType.WARRIOR, Beserk.class),
+	LEAP(2, "Leap", ChatColor.GRAY, ClassType.WARRIOR, Leap.class),
+	RAGE(3, "Rage", ChatColor.RED, ClassType.WARRIOR, Rage.class),
+	CLEAVE(4, "Cleave", ChatColor.DARK_PURPLE, ClassType.WARRIOR, Cleave.class),
+	//Guardian
+	SMASH(1, "Smash", ChatColor.DARK_GRAY, ClassType.GUARDIAN, Smash.class),
+	VITALITY(2, "Vitality", ChatColor.GOLD, ClassType.GUARDIAN, Vitality.class),
+	GUARD(3, "Guard", ChatColor.YELLOW, ClassType.GUARDIAN, Guard.class),
+	ABSORB(4, "Absorb", ChatColor.GREEN, ClassType.GUARDIAN, Absorb.class),
+	//Rogue
+	PICKPOCKET(1, "PickPocket", ChatColor.GOLD, ClassType.ROGUE, PickPocket.class),
+	SHADOWWALK(2, "ShadowWalk", ChatColor.GRAY, ClassType.ROGUE, ShadowWalk.class),
+	BACKSTAB(3, "Backstab", ChatColor.DARK_RED, ClassType.ROGUE, Backstab.class),
+	ASSASSINATE(4, "Assassinate", ChatColor.BLACK, ClassType.ROGUE, Assassinate.class);
 	
 	
 	//Vars

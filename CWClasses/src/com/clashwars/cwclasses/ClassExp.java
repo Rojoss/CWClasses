@@ -4,8 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.clashwars.cwmarket.ItemMenu.ItemMenuClickEvent;
-
 
 
 public class ClassExp {
@@ -128,7 +126,8 @@ public class ClassExp {
 	
 	
 	//Custom ClassLevelupEvent.
-	public static class ClassLevelupEvent {
+	public final static class ClassLevelupEvent extends Event {
+		private static final HandlerList handlers = new HandlerList();
 		private CWPlayer cwp;
 		
 	    public ClassLevelupEvent(CWPlayer cwp) {
@@ -138,5 +137,9 @@ public class ClassExp {
 	    public CWPlayer getCWPlayer() {
 	    	return cwp;
 	    }
+
+		public HandlerList getHandlers() {
+			return handlers;
+		}
 	}
 }

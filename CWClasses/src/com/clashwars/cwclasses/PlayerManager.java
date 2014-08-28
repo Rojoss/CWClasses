@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
+
 import com.clashwars.cwclasses.classes.ClassType;
 import com.clashwars.cwclasses.utils.Util;
 
@@ -95,5 +97,15 @@ public class PlayerManager {
 
 	public CWPlayer getOrCreatePlayer(String uuid) {
 		return getOrCreatePlayer(UUID.fromString(uuid));
+	}
+	
+	
+	public void addExp(CWPlayer cwp, int amount, ClassType classType) {
+		if (classType == cwp.getActiveClass()) {
+			cwp.getExpClass().incrementExp(amount);
+		}
+	}
+	public void addExp(Player player, int amount, ClassType classType) {
+		addExp(getOrCreatePlayer(player.getUniqueId()), amount, classType);
 	}
 }

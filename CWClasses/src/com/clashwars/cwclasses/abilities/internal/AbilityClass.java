@@ -6,7 +6,10 @@ import com.clashwars.cwclasses.CWPlayer;
 
 public interface AbilityClass {
 	
-	public boolean run(CWPlayer player);
+	public void init();
+	default boolean run(CWPlayer player) {
+		return false;
+	}
 	
 	default AbilityType getType() {
 		return AbilityType.UNKNOWN;
@@ -24,7 +27,7 @@ public interface AbilityClass {
 		return false;
 	}
 	
-	default String getDescription() {
+	default String getDescription(int level) {
 		return "&7No description available.";
 	}
 	
