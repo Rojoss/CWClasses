@@ -27,7 +27,7 @@ public enum AbilityType {
 	GUARD(3, "Guard", ChatColor.YELLOW, ClassType.GUARDIAN, Guard.class),
 	ABSORB(4, "Absorb", ChatColor.GREEN, ClassType.GUARDIAN, Absorb.class),
 	//Rogue
-	PICKPOCKET(1, "PickPocket", ChatColor.GOLD, ClassType.ROGUE, PickPocket.class),
+	PICKPOCKET(1, "PickPocket", ChatColor.DARK_GRAY, ClassType.ROGUE, PickPocket.class),
 	SHADOWWALK(2, "ShadowWalk", ChatColor.GRAY, ClassType.ROGUE, ShadowWalk.class),
 	BACKSTAB(3, "Backstab", ChatColor.DARK_RED, ClassType.ROGUE, Backstab.class),
 	ASSASSINATE(4, "Assassinate", ChatColor.BLACK, ClassType.ROGUE, Assassinate.class);

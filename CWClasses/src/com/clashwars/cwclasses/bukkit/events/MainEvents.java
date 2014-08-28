@@ -1,5 +1,6 @@
 package com.clashwars.cwclasses.bukkit.events;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,10 +31,8 @@ public class MainEvents implements Listener {
         		CWPlayer cwp = cwc.getPlayerManager().getOrCreatePlayer(p.getUniqueId());
         		Cooldown cd = cwp.getCDM().getCooldown("ClassSwitch");
         		if (cd != null && cd.onCooldown()) {
-        			long timeLeft = cwp.getCDM().getCooldown("ClassSwitch").getTimeLeft() / 1000;
-        			int minsLeft = (int) timeLeft / 60;
-        			int secsLeft = (int) timeLeft - minsLeft * 60;
-        			p.sendMessage(Util.formatMsg("&cYou can't switch classes yet. &8Cooldown: &7" + minsLeft + "&8:&7" + secsLeft));
+        			long timeLeft = cwp.getCDM().getCooldown("ClassSwitch").getTimeLeft();
+        			p.sendMessage(Util.formatMsg("&cYou can't switch yet. &8Cooldown: &7" + Util.getMinSecStr(timeLeft, ChatColor.GRAY, ChatColor.DARK_GRAY)));
         			return;
         		}
         		cwp.setActiveClass(ct);
