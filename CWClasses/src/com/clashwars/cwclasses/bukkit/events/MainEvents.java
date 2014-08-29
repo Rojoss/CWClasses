@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.clashwars.cwclasses.CWClasses;
 import com.clashwars.cwclasses.CWPlayer;
@@ -48,8 +49,15 @@ public class MainEvents implements Listener {
 		cwp.sendMessage(Util.formatMsg("&2&lLevel up!\n&aYou are now a level &2&l" + cwp.getExpClass().getLevel() + " &r" + cwp.getActiveClass().getColor() + cwp.getActiveClass().getName()) + "&a!");
 		//TODO: Particles
 		//TODO: Sound
+		
 		//TODO: Check if player unlocked a new ability and if so send message.
 		
-		//TODO: Save data.
+		cwp.saveExp(cwp.expToString());
+	}
+	
+	@EventHandler
+	public void quit(PlayerQuitEvent event) {
+		CWPlayer cwp = cwc.getPlayerManager().getOrCreatePlayer(event.getPlayer().getUniqueId());
+		cwp.saveExp(cwp.expToString());
 	}
 }

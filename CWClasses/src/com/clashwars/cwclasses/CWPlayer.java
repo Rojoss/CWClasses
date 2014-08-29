@@ -57,19 +57,11 @@ public class CWPlayer {
 		}
 		//Save progress from last class and set new active class.
 		exp.put(activeClass.getName(), cExp.getExp());
-		try {
-			Statement statement = cwc.getSql().createStatement();
-			if (statement.executeUpdate("UPDATE Players SET ActiveClass='" + activeClass + "', ClassExp='" + expToString() + "' WHERE UUID='" + getUUID().toString() + "';") < 1) {
-				sendMessage(Util.formatMsg("&cError connecting to the databse. Can't save data to prevent data loss you can't switch classes now."));
-				return;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}		
-		updateExp(null, true, false);
-		
-		//Set new class.
-		this.activeClass = classType;
+		if (saveExp(expToString())) {
+			//Set new class.
+			this.activeClass = classType;
+			cExp.setExp(exp.get(activeClass.getName()));
+		}
 	}
 	
 	
@@ -92,7 +84,7 @@ public class CWPlayer {
 	
 	
 	//Update the cached exp from database. Put null to directly get it from the database.
-	public void updateExp(String expStr, boolean updateClassExp, boolean override) {
+	public void loadExp(String expStr, boolean updateClassExp, boolean override) {
 		if (activeClass != null && activeClass != ClassType.UNKNOWN) {
 			// Archer:123; Warrior:12; etc
 			//If str is null get the string from database.
@@ -124,6 +116,21 @@ public class CWPlayer {
 				cExp.setExp(exp.get(activeClass.getName()));
 			}
 		}
+	}
+	
+	public boolean saveExp(String expStr) {
+		try {
+			Statement statement = cwc.getSql().createStatement();
+			if (statement.executeUpdate("UPDATE Players SET ActiveClass='" + activeClass + "', ClassExp='" + expStr + "' WHERE UUID='" + getUUID().toString() + "';") < 1) {
+				sendMessage(Util.formatMsg("&cError connecting to the databse. Can't save your class data."));
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			sendMessage(Util.formatMsg("&cError connecting to the databse. Can't save your class data."));
+			return false;
+		}
+		return true;
 	}
 	
 	//Get the ClassExp class.

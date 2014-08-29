@@ -36,7 +36,7 @@ public class PlayerManager {
 					players.put(uuid, cwp);
 				}
 				players.get(uuid).setActiveClass(ClassType.fromString(res.getString("ActiveClass")));
-				players.get(uuid).updateExp(res.getString("ClassExp"), true, true);
+				players.get(uuid).loadExp(res.getString("ClassExp"), true, true);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -83,7 +83,7 @@ public class PlayerManager {
 				//Exisiting player so update the CWPlayer before returning it.
 				while (res.next()) {
 					player.setActiveClass(ClassType.fromString(res.getString("ActiveClass")));
-					player.updateExp(res.getString("ClassExp"), true, true);
+					player.loadExp(res.getString("ClassExp"), true, true);
 				}
 			}
 		} catch (SQLException e) {

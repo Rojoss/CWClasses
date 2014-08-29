@@ -59,18 +59,17 @@ public class ClassExp {
 		levelProgression = calculateLevelProgression();
 		expToNextLevel = calculateExpToNextLevel();
 		if (prevLevel != level) {
-			Bukkit.broadcastMessage("Prev lvl: " + prevLevel + " new: " + level);
 			//Call custom ClassLevelupEvent
-			//ClassLevelupEvent e = new ClassLevelupEvent(cwp);
-			//Bukkit.getServer().getPluginManager().callEvent(e);
+			ClassLevelupEvent e = new ClassLevelupEvent(cwp);
+			Bukkit.getServer().getPluginManager().callEvent(e);
 		}
 	}
 	public int calculateLevel() {
-		return (int) Math.min(Math.max(Math.floor(expGap * Math.log(exp + offset) + defaultGap), 1), levelCap);
+		return (int) Math.sqrt(exp / 30);
+		//return (int) Math.min(Math.max(Math.floor(expGap * Math.log(exp + offset) + defaultGap), 1), levelCap);
 	}
 
 	public double calculateLevelProgression() {
-		Bukkit.broadcastMessage("Calculating level progression total XP: " + exp + " Level: " + getLevel());
 		return exp - calculateExpForLevel(getLevel() - 1);
 	}
 
@@ -79,8 +78,8 @@ public class ClassExp {
 	}
 
 	public int calculateExpForLevel(int level) {
-		Bukkit.broadcastMessage("Calculating xp for level " + level + " result: " + (int) Math.ceil(Math.pow(Math.E, (level - defaultGap) / expGap) - offset));
-		return (int) Math.ceil(Math.pow(Math.E, (level - defaultGap) / expGap) - offset);
+		return (int) Math.ceil(Math.pow(level, 2) * 30);
+		//return (int) Math.ceil(Math.pow(Math.E, (level - defaultGap) / expGap) - offset);
 	}
 	
 	

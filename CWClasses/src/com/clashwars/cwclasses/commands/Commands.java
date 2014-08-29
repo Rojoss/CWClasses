@@ -54,7 +54,7 @@ public class Commands {
 			CWPlayer cwp = cwc.getPlayerManager().getOrCreatePlayer(uuid);
 			ClassType ac = cwp.getActiveClass();
 			if (ac == null || ac == ClassType.UNKNOWN) {
-				sender.sendMessage(Util.integrateColor("&8===== &&4&lClass Info &8====="));
+				sender.sendMessage(Util.integrateColor("&8===== &4&lClass Info &8====="));
 				sender.sendMessage(Util.integrateColor("&cYou have no active class!"));
 				sender.sendMessage(Util.integrateColor("&cGo to spawn and interact with one of the class npc's."));
 				return true;
@@ -62,12 +62,20 @@ public class Commands {
 			
 			ClassExp cxp = cwp.getExpClass();
 			sender.sendMessage(Util.integrateColor("&8===== &&4&lClass Info &7[" + ac.getColor() + ac.getName() + "&7] &8====="));
+			sender.sendMessage(Util.integrateColor("&6Status&8: &a&lActive"));
 			sender.sendMessage(Util.integrateColor("&6Level&8: &5" + cxp.getLevel()));
 			sender.sendMessage(Util.integrateColor("&6Total Exp&8: &5" + cxp.getExp()));
-			sender.sendMessage(Util.integrateColor("&6Exp&8: &a" + cxp.getLevelProgression() + "&7/&2" + cxp.calculateExpForLevel(cxp.getLevel())));
-			sender.sendMessage(Util.integrateColor("&6Level progress&8: &5" + cxp.getLevelPercentage() + "%"));
+			int xpNeeded = cxp.calculateExpForLevel(cxp.getLevel() + 1) - cxp.calculateExpForLevel(cxp.getLevel());
+			int xpProgress = (int)(xpNeeded - cxp.getExpToNextLevel());
+			if (xpProgress == xpNeeded) {
+				xpProgress = 0;
+			}
+			sender.sendMessage(Util.integrateColor("&6Exp&8: &a" + xpProgress + "&7/&2" + xpNeeded));
+			double perc = ((double) (xpProgress) / xpNeeded) * 100;
+			sender.sendMessage(Util.integrateColor("&6Level progress&8: &5" + Math.round(perc) + "%"));
 			return true;
 		}
+		
 		
 		/*  /switch [className]  */
 		if (label.equalsIgnoreCase("switch")) {
@@ -104,17 +112,70 @@ public class Commands {
 	    			return true;
 	    		}
 	    		cwp.setActiveClass(ct);
-	    		cwp.getCDM().createCooldown("ClassSwitch", 3599000);
+	    		cwp.getCDM().createCooldown("ClassSwitch", 5000/*3599000*/);
 	    		sender.sendMessage(Util.formatMsg("&6Your new active class is now " + ct.getColor() + ct.getName() + "&6!"));
+	        } else {
+	        	String classNames = "";
+	        	for (ClassType c : ClassType.values()) {
+					if (c != ClassType.UNKNOWN) {
+						classNames += c.getColor() + c.getName();
+					}
+				}
+	        	sender.sendMessage(Util.formatMsg("&cInvalid class name."));
+	        	sender.sendMessage(Util.formatMsg("&7Command usage&8: &5/switch &8[" + classNames + "&8]"));
 	        }
 			return true;
 		}
 		
 		
-		/*  /switch [className]  */
+		/*  /classes  */
 		if (label.equalsIgnoreCase("classes")) {
-			cwc.getMainConfig().load();
-			sender.sendMessage(Util.formatMsg("&6Reloaded."));
+			if (args.length > 0) {
+				/*  /classes reload  */
+				if (args[0].equalsIgnoreCase("reload")) {
+					cwc.getMainConfig().load();
+					sender.sendMessage(Util.formatMsg("&6Reloaded."));
+				}
+				
+				/*  /classes givexp (amt) [player] [class]  */
+				if (args[0].equalsIgnoreCase("givexp")) {
+					if (args.length < 2) {
+						sender.sendMessage(Util.formatMsg("&cInvalid usage. &7/classes givexp (amt) [player] [class]"));
+						return true;
+					}
+					if (args.length < 3 && !(sender instanceof Player)) {
+						sender.sendMessage(Util.formatMsg("&cSpecify a player to use this on the console."));
+						return true;
+					}
+					Player player = (Player)sender;
+					
+				}
+				
+				/*  /classes takexp (amt) [player] [class]  */
+				if (args[0].equalsIgnoreCase("takexp")) {
+					
+				}
+				
+				/*  /classes setxp (amt) [player] [class]  */
+				if (args[0].equalsIgnoreCase("setxp")) {
+					
+				}
+				
+				/*  /classes reset [player]  */
+				if (args[0].equalsIgnoreCase("reset")) {
+					
+				}
+			}
+			
+			sender.sendMessage(Util.integrateColor("&8===== &4CWClasses command help &8====="));
+			sender.sendMessage(Util.integrateColor("&6/class [class] [player] &8- &5Display class stats."));
+			sender.sendMessage(Util.integrateColor("&6/abilities [class] [player] &8- &5Display ability stats."));
+			sender.sendMessage(Util.integrateColor("&6/switch [class] &8- &5Switch to another class."));
+			sender.sendMessage(Util.integrateColor("&6/classes reload &8- &5Reload the plugin"));
+			sender.sendMessage(Util.integrateColor("&6/classes givexp (amt) [player] [class] &8- &5Give class xp."));
+			sender.sendMessage(Util.integrateColor("&6/classes takexp (amt) [player] [class] &8- &5Take class xp."));
+			sender.sendMessage(Util.integrateColor("&6/classes setxp (amt) [player] [class] &8- &5Set class xp."));
+			sender.sendMessage(Util.integrateColor("&6/classes reset [player] &8- &5Reset cooldowns."));
 			return true;
 		}
 		

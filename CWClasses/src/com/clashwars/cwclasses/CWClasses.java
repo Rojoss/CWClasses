@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import com.clashwars.cwclasses.abilities.internal.AbilityType;
@@ -43,7 +44,11 @@ public class CWClasses {
 		instance = null;
 		mainCfg.save();
 		
-		//TODO: save class data of all online CWPlayers.
+		for (Player p : getServer().getOnlinePlayers()) {
+			CWPlayer cwp = getPlayerManager().getOrCreatePlayer(p.getUniqueId());
+			cwp.saveExp(cwp.expToString());
+		}
+		
 		getServer().getScheduler().cancelTasks(getPlugin());
 
 		log("Disabled.");
@@ -71,15 +76,12 @@ public class CWClasses {
 			getPlugin().getPluginLoader().disablePlugin(getPlugin());
 			return;
 		}
-		//TODO: create table...
-		//sql.createTable("players", true, playerStructure);
 
 		playerManager = new PlayerManager(this);
 		playerManager.populate();
 
 		cmds = new Commands(this);
 		
-		//getServer().getScheduler().runTaskTimerAsynchronously(getPlugin(), (sus = new SqlUpdateSchedule(this)), 0, 15L);
 		registerEvents();
 		log("Successfully enabled.");
 	}

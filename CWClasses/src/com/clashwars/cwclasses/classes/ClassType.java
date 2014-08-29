@@ -35,7 +35,9 @@ public enum ClassType {
         if (types == null) {
             initTypes();
         }
-        return types.get(name);
+        name = name.toLowerCase();
+        
+        return types.get(name.substring(0, 1).toUpperCase() + name.substring(1));
     }
 	
 	//Get ID
