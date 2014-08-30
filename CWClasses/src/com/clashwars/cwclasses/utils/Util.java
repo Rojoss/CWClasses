@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 public class Util {
 	
@@ -121,4 +127,18 @@ public class Util {
 		}
 		return -1;
 	}
+
+
+	public static double roundDouble(double val) {
+		val = val*100;
+		val = Math.round(val);
+		val = val /100;
+		return val;
+	}
+	
+	public static boolean canPvP(Player player) {
+		ApplicableRegionSet set = WGBukkit.getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
+		LocalPlayer localPlayer = WGBukkit.getPlugin().wrapPlayer(player);
+		return set.allows(DefaultFlag.PVP, localPlayer);
+    }
 }

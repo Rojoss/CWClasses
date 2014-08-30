@@ -100,12 +100,12 @@ public class PlayerManager {
 	}
 	
 	
-	public void addExp(CWPlayer cwp, int amount, ClassType classType) {
+	public void addExp(CWPlayer cwp, double amount, ClassType classType) {
 		if (classType == cwp.getActiveClass()) {
 			cwp.incrementExp(amount);
 		}
 	}
-	public void addExp(Player player, int amount, ClassType classType) {
+	public void addExp(Player player, double amount, ClassType classType) {
 		addExp(getOrCreatePlayer(player.getUniqueId()), amount, classType);
 	}
 }

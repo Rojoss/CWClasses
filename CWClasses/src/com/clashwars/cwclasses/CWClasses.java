@@ -1,6 +1,10 @@
 package com.clashwars.cwclasses;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
@@ -33,6 +37,8 @@ public class CWClasses {
 
 	private final Logger		log	= Logger.getLogger("Minecraft");
 
+	public Set<UUID> spawnerMobs = new HashSet<UUID>();
+	
 	public static CWClasses		instance;
 
 
@@ -49,7 +55,13 @@ public class CWClasses {
 			cwp.saveExp(cwp.expToString());
 		}
 		
-		getServer().getScheduler().cancelTasks(getPlugin());
+		try {
+			c.close();
+			sql.closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 
 		log("Disabled.");
 	}
@@ -121,6 +133,13 @@ public class CWClasses {
 	}
 	
 	public Connection getSql() {
+		try {
+			if (c == null || c.isClosed()) {
+				c = sql.openConnection();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return c;
 	}
 	

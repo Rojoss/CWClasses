@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -17,7 +18,9 @@ import com.clashwars.cwclasses.CWPlayer;
 import com.clashwars.cwclasses.abilities.internal.AbilityClass;
 import com.clashwars.cwclasses.abilities.internal.AbilityType;
 import com.clashwars.cwclasses.abilities.internal.Scalable;
+import com.clashwars.cwclasses.classes.ClassType;
 import com.clashwars.cwclasses.utils.CooldownManager.Cooldown;
+import com.clashwars.cwclasses.utils.CustomEffects;
 import com.clashwars.cwclasses.utils.Util;
 
 public class Smash implements AbilityClass {
@@ -27,7 +30,7 @@ public class Smash implements AbilityClass {
 	int yScale = 5;
 	
 	public Smash() {
-		scales.put("force", new Scalable(0, 100, 10, 80));
+		scales.put("force", new Scalable(0, 100, 10, 25));
 	}
 	
 	
@@ -52,7 +55,10 @@ public class Smash implements AbilityClass {
 		}
 		if (event.getPlayer().isSneaking() && event.getPlayer().isBlocking()) {
 			CWPlayer cwp = CWClasses.instance.getPlayerManager().getOrCreatePlayer(event.getPlayer().getUniqueId());
-			
+			if (!Util.canPvP(cwp.getPlayer())) {
+				cwp.sendMessage(Util.formatMsg(getType().getColor() + getType().getName() + " &ccan't be used here!"));
+				return;
+			}
 			if (cwp.getActiveClass() == getType().getClassType() && cwp.getLevel() >= getLevel()) {
 				//Check cooldown.
 				Cooldown cd = cwp.getCDM().getCooldown("smash");
@@ -80,6 +86,7 @@ public class Smash implements AbilityClass {
 					
 					pushedBack++;
 					if (entity instanceof Player) {
+						((Player)entity).playSound(entity.getLocation(), Sound.BAT_TAKEOFF, 0.2f, 0f);
 						((Player)entity).sendMessage(Util.integrateColor("&cYou got smashed by " + cwp.getName() + "!"));
 					}
 				}
@@ -89,9 +96,11 @@ public class Smash implements AbilityClass {
 					event.getPlayer().sendMessage(Util.formatMsg("&cNo entities nearby!"));
 					return;
 				}
-				//TODO: Sounds
-				//TODO: Particles
+				event.getClickedBlock().getWorld().playSound(event.getPlayer().getLocation(), Sound.ZOMBIE_METAL, 1.0f, 0f);
+				event.getClickedBlock().getWorld().playSound(event.getPlayer().getLocation(), Sound.ZOMBIE_WOODBREAK, 0.1f, 0f);
+				CustomEffects.Cloud(event.getPlayer().getLocation().add(0d, -1d, 0d), 2);
 				cwp.getCDM().createCooldown("smash", 30000);
+				CWClasses.instance.getPlayerManager().addExp(cwp, 10.0, ClassType.GUARDIAN);
 				cwp.sendMessage(Util.integrateColor(getType().getColor() + getType().getName() + "! &7Pushed back nearby entities with &a" + scales.get("force").getValueAtLevel(cwp.getLevel()) + " &7force!"));
 			}
 		}

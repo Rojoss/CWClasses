@@ -2,6 +2,7 @@ package com.clashwars.cwclasses.abilities;
 
 import java.util.HashMap;
 
+import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -14,6 +15,8 @@ import com.clashwars.cwclasses.CWPlayer;
 import com.clashwars.cwclasses.abilities.internal.AbilityClass;
 import com.clashwars.cwclasses.abilities.internal.AbilityType;
 import com.clashwars.cwclasses.abilities.internal.Scalable;
+import com.clashwars.cwclasses.classes.ClassType;
+import com.clashwars.cwclasses.utils.ParticleEffect;
 import com.clashwars.cwclasses.utils.Util;
 
 public class TrueStrike implements AbilityClass {
@@ -62,13 +65,14 @@ public class TrueStrike implements AbilityClass {
 				if (cwp.getActiveClass() == getType().getClassType() && cwp.getLevel() >= getLevel()) {
 					int percentage = scales.get("chance").getValueAtLevel(cwp.getLevel());
 					if (Util.checkChance(percentage)) {
-						hit.setHealth(hit.getHealth() - (event.getDamage() / 100 * 50));
+						event.setDamage(event.getDamage() + (event.getDamage() / 100 * 50));
 						if (hit instanceof Player) {
-							((Player) hit).sendMessage(Util.integrateColor("&cHit by a " + getType().getColor() + getType().getName()) + " &carrow.");
+							((Player) hit).sendMessage(Util.integrateColor("&cHit by a " + getType().getColor() + getType().getName() + " &carrow."));
 						}
 						cwp.sendMessage(Util.integrateColor(getType().getColor() + getType().getName() + "! &7Arrow dealth 50% more damage!"));
-						//TODO: Sounds
-						//TODO: Particles
+						CWClasses.instance.getPlayerManager().addExp(cwp, 5.0, ClassType.ARCHER);
+						cwp.getPlayer().playSound(cwp.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.8f, 1.3f);
+						ParticleEffect.MAGIC_CRIT.display(hit.getLocation(), 1.0f, 1.5f, 1.0f, 0.01f, 30);
 					}
 				}
 			}

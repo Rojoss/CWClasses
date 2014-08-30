@@ -26,6 +26,9 @@ public class ExpEvents implements Listener {
 		if (event.isCancelled()) {
 			return;
 		}
+		if (cwc.spawnerMobs.contains(event.getEntity().getUniqueId())) {
+			return;
+		}
 		Player damaged = null;
 		if (event.getEntity() instanceof Player) {
 			damaged = (Player)event.getEntity();
@@ -38,11 +41,12 @@ public class ExpEvents implements Listener {
 			//Hit a player or mob with sword [Warrior]
 			Material mat = damager.getItemInHand().getType();
 			if (mat == Material.DIAMOND_SWORD || mat == Material.IRON_SWORD || mat == Material.STONE_SWORD || mat == Material.WOOD_SWORD || mat == Material.GOLD_SWORD) {
-				if (damaged == null) { 
-					//TODO: Check for spawner mob.
-					cwc.getPlayerManager().addExp(damager, 1, ClassType.WARRIOR);
+				if (damaged == null) {
+					double xp = (double)Math.min(Math.max(event.getDamage() / 14, 0.1), 1.5);
+					cwc.getPlayerManager().addExp(damager, xp, ClassType.WARRIOR);
 				} else {
-					cwc.getPlayerManager().addExp(damager, 5, ClassType.WARRIOR);
+					double xp = (double)Math.min(Math.max(event.getDamage() / 4, 1.0), 5.0);
+					cwc.getPlayerManager().addExp(damager, xp, ClassType.WARRIOR);
 				}
 			}
 		}
@@ -53,11 +57,12 @@ public class ExpEvents implements Listener {
 				damager = (Player) projSrc;
 				
 				//Shoot a player or mob with bow [Archer]
-				if (damaged == null) { 
-					//TODO: Check for spawner mob.
-					cwc.getPlayerManager().addExp(damager, 1, ClassType.ARCHER);
+				if (damaged == null) {
+					double xp = (double)Math.min(Math.max(event.getDamage() / 8, 0.5), 2.5);
+					cwc.getPlayerManager().addExp(damager, xp, ClassType.ARCHER);
 				} else {
-					cwc.getPlayerManager().addExp(damager, 5, ClassType.ARCHER);
+					double xp = (double)Math.min(Math.max(event.getDamage() / 2.5, 1.0), 8.0);
+					cwc.getPlayerManager().addExp(damager, xp, ClassType.ARCHER);
 				}
 			}
 		}
@@ -65,10 +70,13 @@ public class ExpEvents implements Listener {
 		//Blocking damage [Guardian]
 		if (damaged != null) {
 			if (damaged.isBlocking()) {
+				//XP values are doubled cuz this is called twice for some reason.
 				if (damager == null) {
-					cwc.getPlayerManager().addExp(damaged, 1, ClassType.GUARDIAN);
+					double xp = (double)Math.min(Math.max(event.getDamage() / 25, 0.1), 0.8);
+					cwc.getPlayerManager().addExp(damaged, xp, ClassType.GUARDIAN);
 				} else {
-					cwc.getPlayerManager().addExp(damaged, 5, ClassType.GUARDIAN);
+					double xp = (double)Math.min(Math.max(event.getDamage() / 8, 0.5), 2.5);
+					cwc.getPlayerManager().addExp(damaged, xp, ClassType.GUARDIAN);
 				}
 			}
 		}
@@ -76,6 +84,10 @@ public class ExpEvents implements Listener {
 	
 	@EventHandler
 	public void death(EntityDeathEvent event) {
+		if (cwc.spawnerMobs.contains(event.getEntity().getUniqueId())) {
+			cwc.spawnerMobs.remove(event.getEntity().getUniqueId());
+			return;
+		}
 		if (!(event.getEntity() instanceof LivingEntity)) {
 			return;
 		}
@@ -86,9 +98,51 @@ public class ExpEvents implements Listener {
 			if (entity instanceof Player) {
 				cwc.getPlayerManager().addExp(killer, 25, ClassType.WARRIOR);
 			} else {
-				//TODO: Different values for different mobs.
-				//TODO: Check for spawner mobs.
-				cwc.getPlayerManager().addExp(killer, 3, ClassType.WARRIOR);
+				double xp = 1.0;
+				switch (entity.getType()) {
+					case CHICKEN:
+						xp = 0.5;
+						break;
+					case PIG:
+					case COW:
+					case MUSHROOM_COW:
+					case SHEEP:
+						xp = 1.0;
+						break;
+					case WOLF:
+					case OCELOT:
+					case SQUID:
+					case BAT:
+					case ZOMBIE:
+					case SILVERFISH:
+					case CAVE_SPIDER:
+					case HORSE:
+					case MAGMA_CUBE:
+					case SLIME:
+						xp = 3.0;
+						break;
+					case SKELETON:
+					case SPIDER:
+					case CREEPER:
+					case BLAZE:
+					case ENDERMAN:
+					case WITCH:
+					case VILLAGER:
+						xp = 4.0;
+						break;
+					case GHAST:
+						xp = 5.0;
+						break;
+					case WITHER:
+						xp = 300;
+						break;
+					case ENDER_DRAGON:
+						xp = 200;
+						break;
+					default:
+						break;
+				}
+				cwc.getPlayerManager().addExp(killer, xp, ClassType.WARRIOR);
 			}
 		}
 	}

@@ -9,9 +9,12 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 import com.clashwars.cwclasses.classes.ClassType;
 import com.clashwars.cwclasses.utils.CooldownManager;
+import com.clashwars.cwclasses.utils.ParticleEffect;
 import com.clashwars.cwclasses.utils.Util;
 
 public class CWPlayer {
@@ -82,7 +85,18 @@ public class CWPlayer {
 	}
 	public void incrementExp(ClassType ct, double amt) {
 		if (ct != null) {
+			int prevLevel = getLevel();
+			amt = Util.roundDouble(amt);
 			expData.put(ct.getName(), getExp(ct) + amt);
+			
+			//Check for level up.
+			int level = getLevel();
+			if (level != prevLevel) {
+				//Call custom ClassLevelupEvent
+				ClassLevelupEvent e = new ClassLevelupEvent(this);
+				Bukkit.getServer().getPluginManager().callEvent(e);
+			}
+			ParticleEffect.ENCHANTMENT_TABLE.display(getPlayer().getLocation().add(0f, 2.8f, 0f), 0, 0.5f, 0, 3, (int)Math.max((int)Math.round(amt),1));
 		}
 		return;
 	}
@@ -94,6 +108,7 @@ public class CWPlayer {
 	}
 	public void decrementExp(ClassType ct, double amt) {
 		if (ct != null) {
+			amt = Util.roundDouble(amt);
 			expData.put(ct.getName(), Math.max(getExp(ct) - amt, 0));
 		}
 		return;
@@ -106,6 +121,7 @@ public class CWPlayer {
 	}
 	public void setExp(ClassType ct, double amt) {
 		if (ct != null) {
+			amt = Util.roundDouble(amt);
 			expData.put(ct.getName(), Math.max(amt, 0));
 		}
 		return;
@@ -118,8 +134,8 @@ public class CWPlayer {
 	public double getExp(ClassType ct) {
 		if (!expData.containsKey(ct.getName())) {
 			expData.put(ct.getName(), (double)0.0);
-		}
-		return expData.get(ct.getName());
+		} 
+		return Util.roundDouble(expData.get(ct.getName()));
 	}
 	
 	//Calculate level
@@ -133,12 +149,12 @@ public class CWPlayer {
 		return -1;
 	}
 	public int getLevel(double xp) {
-		return (int) Math.sqrt(xp / 30);
+		return (int) Math.sqrt(xp / 20);
 	}
 	
 	//Calculate Experience needed for the specified level.
 	public int getExpForLevel(int level) {
-		return (int) Math.ceil(Math.pow(level, 2) * 30);
+		return (int) Math.ceil(Math.pow(level, 2) * 20);
 	}
 	
 	//Calculate the xp difference between 2 levels
@@ -268,5 +284,29 @@ public class CWPlayer {
 			return other.getUUID() == getUUID();
 		}
 		return false;
+	}
+	
+	
+	
+	//Custom ClassLevelupEvent.
+	public static class ClassLevelupEvent extends Event {
+		private CWPlayer cwp;
+		
+	    public ClassLevelupEvent(CWPlayer cwp) {
+	    	this.cwp = cwp;
+	    }
+	    
+	    public CWPlayer getCWPlayer() {
+	    	return cwp;
+	    }
+
+	    private static final HandlerList handlers = new HandlerList();
+	    @Override
+	    public HandlerList getHandlers() {
+	        return handlers;
+	    }
+	    public static HandlerList getHandlerList() {
+	        return handlers;
+	    }
 	}
 }
