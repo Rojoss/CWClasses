@@ -19,15 +19,15 @@ public class CWPlayer {
 	private UUID		uuid;
 	
 	private ClassType activeClass;
-	private HashMap<String, Double> exp = new HashMap<String, Double>();
-	private ClassExp	cExp;
+	private HashMap<String, Double> expData = new HashMap<String, Double>();
 	private CooldownManager cdm;
+	
 
 	
 	public CWPlayer(CWClasses cwc, UUID uid) {
 		this.cwc = cwc;
 		this.uuid = uid;
-		cExp = new ClassExp(this);
+		//cExp = new ClassExp(this);
 		cdm = new CooldownManager();
 	}
 
@@ -35,89 +35,188 @@ public class CWPlayer {
 		return cwc;
 	}
 	
+	
+	//#######################
+	//### Custom methods. ###
+	//#######################
 	public UUID getUUID() {
 		return uuid;
 	}
 	
-	
-	//Custom methods.
 	public CooldownManager getCDM() {
 		return cdm;
 	}
 	
+	//Get the activated class.
 	public ClassType getActiveClass() {
 		return activeClass;
 	}
 	
 	//Set a new active class.
 	public void setActiveClass(ClassType classType) {
-		if (activeClass == null || activeClass == ClassType.UNKNOWN) {
-			this.activeClass = classType;
+		//No previous class so can just set it.
+		if (activeClass == null) {
+			activeClass = classType;
 			return;
 		}
-		//Save progress from last class and set new active class.
-		exp.put(activeClass.getName(), cExp.getExp());
+		//Save progress from last class.
+		expData.put(activeClass.getName(), getExp());
+		ClassType prevClass = activeClass;
+		activeClass = classType;
 		if (saveExp(expToString())) {
-			//Set new class.
-			this.activeClass = classType;
-			cExp.setExp(exp.get(activeClass.getName()));
+			setExp(getExp(activeClass));
+		} else {
+			activeClass = prevClass;
 		}
 	}
 	
 	
-	//Exp edit
-	public void incrementExp(double xp) {
-		if (activeClass != null && activeClass != ClassType.UNKNOWN) {
-			exp.put(activeClass.toString(), exp.get(activeClass.toString()) + xp);
-			cExp.incrementExp(xp);
+	//#########################
+	//### Experience stuff. ###
+	//#########################
+	
+	//Add given amount of xp
+	public void incrementExp(double amt) {
+		incrementExp(activeClass, amt);
+		return;
+	}
+	public void incrementExp(ClassType ct, double amt) {
+		if (ct != null) {
+			expData.put(ct.getName(), getExp(ct) + amt);
 		}
 		return;
 	}
 
-	public void decrementExp(double xp) {
-		if (activeClass != null && activeClass != ClassType.UNKNOWN) {
-			exp.put(activeClass.toString(), Math.max(0, exp.get(activeClass.toString()) - xp));
-			cExp.decrementExp(xp);
+	//Take given amount of xp
+	public void decrementExp(double amt) {
+		decrementExp(activeClass, amt);
+		return;
+	}
+	public void decrementExp(ClassType ct, double amt) {
+		if (ct != null) {
+			expData.put(ct.getName(), Math.max(getExp(ct) - amt, 0));
 		}
 		return;
 	}
 	
+	//Set given amount of xp
+	public void setExp(double amt) {
+		setExp(activeClass, amt);
+		return;
+	}
+	public void setExp(ClassType ct, double amt) {
+		if (ct != null) {
+			expData.put(ct.getName(), Math.max(amt, 0));
+		}
+		return;
+	}
 	
-	//Update the cached exp from database. Put null to directly get it from the database.
-	public void loadExp(String expStr, boolean updateClassExp, boolean override) {
-		if (activeClass != null && activeClass != ClassType.UNKNOWN) {
-			// Archer:123; Warrior:12; etc
-			//If str is null get the string from database.
-			if (expStr == null || expStr.isEmpty()) {
-				try {
-					Statement statement = cwc.getSql().createStatement();
-					ResultSet res = statement.executeQuery("SELECT ClassExp FROM Players WHERE UUID='" + getUUID().toString() + "';");
-					
-					while (res.next()) {
-						expStr = res.getString("ClassExp");
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}			
-			}
-			//Split the string etc.
-			String[] split1 = expStr.split("; ");
-			String[] split2;
-			for (int i = 0; i < split1.length; i++) {
-				split2 = split1[i].split(":");
-				if (split2.length > 1) {
-					//Put the xp in cached map with last known values.
-					if (override || !exp.containsKey(split2[0])) {
-						exp.put(split2[0], (Double)Double.parseDouble(split2[1]));
-					}
+	//Get the amount of xp
+	public double getExp() {
+		return getExp(activeClass);
+	}
+	public double getExp(ClassType ct) {
+		if (!expData.containsKey(ct.getName())) {
+			expData.put(ct.getName(), (double)0.0);
+		}
+		return expData.get(ct.getName());
+	}
+	
+	//Calculate level
+	public int getLevel() {
+		return getLevel(activeClass);
+	}
+	public int getLevel(ClassType ct) {
+		if (ct != null) {
+			return getLevel(getExp(ct));
+		}
+		return -1;
+	}
+	public int getLevel(double xp) {
+		return (int) Math.sqrt(xp / 30);
+	}
+	
+	//Calculate Experience needed for the specified level.
+	public int getExpForLevel(int level) {
+		return (int) Math.ceil(Math.pow(level, 2) * 30);
+	}
+	
+	//Calculate the xp difference between 2 levels
+	public int getExpDiffNextLvl() {
+		return getExpDiffNextLvl(activeClass);
+	}
+	public int getExpDiffNextLvl(ClassType ct) {
+		if (ct != null) {
+			int lvl = getLevel(ct);
+			return getExpDiff(lvl + 1, lvl);
+		}
+		return -1;
+	}
+	public int getExpDiff(int highLvl, int lowLvl) {
+		return (int)getExpForLevel(highLvl) - getExpForLevel(lowLvl);
+	}
+	
+	//Calculate the xp at the current level.
+	public int getExpProgress() {
+		return getExpProgress(activeClass);
+	}
+	public int getExpProgress(ClassType ct) {
+		if (ct != null) {
+			return getExpProgress(getLevel(ct), getExp(ct));
+		}
+		return -1;
+	}
+	public int getExpProgress(int level, double xp) {
+		return(int)(getExpDiff(level + 1, level) - (getExpForLevel(level + 1) - xp));
+	}
+	
+	//Convert the map with all experience data to a string.
+	//String example: "Archer:123; Warrior:12; " etc
+	public String expToString() {
+		String expStr = "";
+		for (String key : expData.keySet()) {
+			expStr += "" + key + ":" + expData.get(key).toString() + "; ";
+		}
+		if (expStr.endsWith("; ")) {
+			expStr.substring(0, expStr.length() - 2);
+		}
+		return expStr;
+	}
+	
+	//Load in experience data from string.
+	//(Load directly from database if string is null)
+	public void loadExp(String expStr, boolean override) {
+		//If str is null get the xp data from database.
+		if (expStr == null || expStr.isEmpty()) {
+			try {
+				Statement statement = cwc.getSql().createStatement();
+				ResultSet res = statement.executeQuery("SELECT ClassExp FROM Players WHERE UUID='" + getUUID().toString() + "';");
+				
+				while (res.next()) {
+					expStr = res.getString("ClassExp");
 				}
-			}
-			if (updateClassExp) {
-				cExp.setExp(exp.get(activeClass.getName()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}			
+		}
+		//Split the string to get all xp keys/values.
+		String[] split1 = expStr.split("; ");
+		String[] split2;
+		for (int i = 0; i < split1.length; i++) {
+			split2 = split1[i].split(":");
+			if (split2.length > 1) {
+				//Put the xp in map
+				if (override || !expData.containsKey(split2[0])) {
+					expData.put(split2[0], (Double)Double.parseDouble(split2[1]));
+				}
 			}
 		}
 	}
 	
+	//Save cached xp in database and save the active class.
+	public boolean saveExp() {
+		return saveExp(expToString());
+	}
 	public boolean saveExp(String expStr) {
 		try {
 			Statement statement = cwc.getSql().createStatement();
@@ -133,27 +232,11 @@ public class CWPlayer {
 		return true;
 	}
 	
-	//Get the ClassExp class.
-	public ClassExp getExpClass() {
-		return cExp;
-	}
-	
-	public String expToString() {
-		String expStr = "";
-		for (String key : exp.keySet()) {
-			expStr += "" + key + ":" + exp.get(key).toString() + "; ";
-		}
-		if (expStr.endsWith("; ")) {
-			expStr.substring(0, expStr.length() - 2);
-		}
-		return expStr;
-	}
-	
-	
-	
 	
 
-	//Bukkit methods
+	//#######################
+	//### Bukkit methods. ###
+	//#######################
 	public Player getPlayer() {
 		return Bukkit.getPlayer(getUUID());
 	}
@@ -175,7 +258,8 @@ public class CWPlayer {
 	}
 	
 	
-	//Compare by UUID.
+	
+	//Compare CWPlayers with eachother by UUID
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof CWPlayer) {

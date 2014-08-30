@@ -6,7 +6,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -17,12 +16,12 @@ import com.clashwars.cwclasses.abilities.internal.AbilityType;
 import com.clashwars.cwclasses.abilities.internal.Scalable;
 import com.clashwars.cwclasses.utils.Util;
 
-public class TrueStrike implements AbilityClass,Listener {
+public class TrueStrike implements AbilityClass {
 
 	HashMap<String, Scalable> scales = new HashMap<String, Scalable>();
 	
 	public TrueStrike() {
-		scales.put("chance", new Scalable(0, 50, 1, 20));
+		scales.put("chance", new Scalable(1, 50, 1, 20));
 	}
 	
 	
@@ -49,7 +48,7 @@ public class TrueStrike implements AbilityClass,Listener {
 		if (event.isCancelled()) {
 			return;
 		}
-		if (event.getEntity() instanceof LivingEntity) {
+		if (!(event.getEntity() instanceof LivingEntity)) {
 			return;
 		}
 		
@@ -60,8 +59,8 @@ public class TrueStrike implements AbilityClass,Listener {
 			if (projSrc instanceof Player) {
 				CWPlayer cwp = CWClasses.instance.getPlayerManager().getOrCreatePlayer(((Player) projSrc).getUniqueId());
 				
-				if (cwp.getActiveClass() == getType().getClassType() && cwp.getExpClass().getLevel() >= getLevel()) {
-					int percentage = scales.get("chance").getValueAtLevel(cwp.getExpClass().getLevel());
+				if (cwp.getActiveClass() == getType().getClassType() && cwp.getLevel() >= getLevel()) {
+					int percentage = scales.get("chance").getValueAtLevel(cwp.getLevel());
 					if (Util.checkChance(percentage)) {
 						hit.setHealth(hit.getHealth() - (event.getDamage() / 100 * 50));
 						if (hit instanceof Player) {

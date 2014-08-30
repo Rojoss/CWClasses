@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 
+import com.clashwars.cwclasses.utils.Util;
+
 public enum ClassType {
-	UNKNOWN(0, "Unknown", ChatColor.WHITE),
-	WARRIOR(1, "Warrior", ChatColor.DARK_RED, "ability1", "ability2", "etc"),
-	ARCHER(2, "Archer", ChatColor.DARK_GREEN),
-	GUARDIAN(3, "Guardian", ChatColor.DARK_AQUA),
-	ROGUE(4, "Rogue", ChatColor.DARK_GRAY);
+	WARRIOR(1, "Warrior", ChatColor.DARK_RED, "Beserk", "Leap", "Rage", "Cleave"),
+	ARCHER(2, "Archer", ChatColor.DARK_GREEN, "TrueStrike", "FrostArrow", "Backflip", "Repel"),
+	GUARDIAN(3, "Guardian", ChatColor.DARK_AQUA, "Smash", "Vitality", "Guard", "Absorb"),
+	ROGUE(4, "Rogue", ChatColor.DARK_GRAY, "PickPocket", "ShadowWalk", "Backstab", "Assassinate");
 	
 	
 	//Vars
@@ -37,7 +38,7 @@ public enum ClassType {
         }
         name = name.toLowerCase();
         
-        return types.get(name.substring(0, 1).toUpperCase() + name.substring(1));
+        return types.get(Util.capitalize(name));
     }
 	
 	//Get ID

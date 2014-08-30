@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +22,7 @@ import com.clashwars.cwclasses.abilities.internal.Scalable;
 import com.clashwars.cwclasses.utils.CooldownManager.Cooldown;
 import com.clashwars.cwclasses.utils.Util;
 
-public class PickPocket implements AbilityClass,Listener {
+public class PickPocket implements AbilityClass {
 	HashMap<String, Scalable> scales = new HashMap<String, Scalable>();
 	
 	public PickPocket() {
@@ -38,10 +37,6 @@ public class PickPocket implements AbilityClass,Listener {
 	@Override
 	public String getDescription(int level) {
 		return "&7When pickpocketing you will steal a random item from the other player his inventory. You have &a" + scales.get("chance").getValueAtLevel(level) + "% &7chance to succeed. If you fail you will get poisoned.";
-	}
-	@Override
-	public boolean isPassive() {
-		return true;
 	}
 	@Override
 	public HashMap<String, Scalable> getScales() {
@@ -60,7 +55,7 @@ public class PickPocket implements AbilityClass,Listener {
 		Player player = event.getPlayer();
 		Player target = (Player)event.getRightClicked();
 		CWPlayer cwp = CWClasses.instance.getPlayerManager().getOrCreatePlayer(player.getUniqueId());
-		if (cwp.getActiveClass() == getType().getClassType() && cwp.getExpClass().getLevel() >= getLevel()) {
+		if (cwp.getActiveClass() == getType().getClassType() && cwp.getLevel() >= getLevel()) {
 			//Check cooldown
 			Cooldown cd = cwp.getCDM().getCooldown("pickpocket");
 			if (cd != null && cd.onCooldown()) {
@@ -71,7 +66,7 @@ public class PickPocket implements AbilityClass,Listener {
 			cwp.getCDM().createCooldown("smash", 120000);
 			
 			//Check chance
-			int percentage = scales.get("chance").getValueAtLevel(cwp.getExpClass().getLevel());
+			int percentage = scales.get("chance").getValueAtLevel(cwp.getLevel());
 			if (Util.checkChance(percentage)) {
 				Inventory inv = target.getInventory();
 				//Get a list of all slots that have items.

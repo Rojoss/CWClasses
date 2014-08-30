@@ -23,6 +23,10 @@ public class CooldownManager {
 		}
 	}
 	
+	public void removeCooldowns() {
+		cooldowns.clear();
+	}
+	
 	public Cooldown getCooldown(String identifier) {
 		return cooldowns.get(identifier);
 	}

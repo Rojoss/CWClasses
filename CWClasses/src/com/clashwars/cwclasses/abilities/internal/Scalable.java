@@ -1,5 +1,7 @@
 package com.clashwars.cwclasses.abilities.internal;
 
+
+
 public class Scalable {
 	private int lvl;
 	private int minLvl;
@@ -53,8 +55,8 @@ public class Scalable {
 		return maxVal;
 	}
 	
-	public int getValueAtLevel(int level) {  
-		return Math.round(minVal + ((maxVal - minVal) / (maxLvl - minLvl)) * (level- minLvl));
+	public int getValueAtLevel(int level) {
+		return Math.min(Math.round(minVal + ((float)(maxVal - minVal) / (maxLvl - minLvl)) * (level- minLvl)), maxVal);
 	}
 	//End
 	

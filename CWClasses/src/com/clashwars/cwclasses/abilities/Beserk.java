@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -16,7 +15,7 @@ import com.clashwars.cwclasses.abilities.internal.AbilityType;
 import com.clashwars.cwclasses.abilities.internal.Scalable;
 import com.clashwars.cwclasses.utils.Util;
 
-public class Beserk implements AbilityClass,Listener {
+public class Beserk implements AbilityClass {
 	HashMap<String, Scalable> scales = new HashMap<String, Scalable>();
 	
 	public Beserk() {
@@ -30,7 +29,7 @@ public class Beserk implements AbilityClass,Listener {
 	}
 	@Override
 	public String getDescription(int level) {
-		return "&7When killing a player you will get strength &81 &7for &a" + (double)Math.round(scales.get("duration").getValueAtLevel(level) / 20) + " seconds &7.";
+		return "&7When killing a player you will get strength &81 &7for &a" + (double)Math.round(scales.get("duration").getValueAtLevel(level) / 20) + " &7seconds.";
 	}
 	@Override
 	public boolean isPassive() {
@@ -50,8 +49,8 @@ public class Beserk implements AbilityClass,Listener {
 		Player killer = event.getEntity().getKiller();
 		CWPlayer cwp = CWClasses.instance.getPlayerManager().getOrCreatePlayer(killer.getUniqueId());
 		
-		if (cwp.getActiveClass() == getType().getClassType() && cwp.getExpClass().getLevel() >= getLevel()) {
-			int ticks = scales.get("duration").getValueAtLevel(cwp.getExpClass().getLevel());
+		if (cwp.getActiveClass() == getType().getClassType() && cwp.getLevel() >= getLevel()) {
+			int ticks = scales.get("duration").getValueAtLevel(cwp.getLevel());
 			killer.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, ticks, 1), true);
 			killer.sendMessage(Util.integrateColor(getType().getColor() + getType().getName() + "! &7Strength for &a" + (double)Math.round(ticks/20) + " &7seconds!"));
 			//TODO: Sounds

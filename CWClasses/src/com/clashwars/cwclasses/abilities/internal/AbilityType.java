@@ -24,7 +24,6 @@ import com.clashwars.cwclasses.abilities.Vitality;
 import com.clashwars.cwclasses.classes.ClassType;
 
 public enum AbilityType {
-	UNKNOWN(0, "Unknown", ChatColor.WHITE, ClassType.UNKNOWN, null),
 	//Archer
 	TRUESTRIKE(1, "TrueStrike", ChatColor.AQUA, ClassType.ARCHER, new TrueStrike()),
 	FROSTARROW(2, "FrostArrow", ChatColor.DARK_AQUA, ClassType.ARCHER, new FrostArrow()),

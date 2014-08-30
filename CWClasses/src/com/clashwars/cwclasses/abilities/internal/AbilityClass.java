@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 public interface AbilityClass extends Listener {
 	
 	default AbilityType getType() {
-		return AbilityType.UNKNOWN;
+		return null;
 	}
 	
 	default int getCooldown() {
@@ -27,7 +27,7 @@ public interface AbilityClass extends Listener {
 	}
 	
 	default String getActivationInfo() {
-		return "&7No activation.";
+		return "";
 	}
 	
 	default HashMap<String, Scalable> getScales() {

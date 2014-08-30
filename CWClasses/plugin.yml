@@ -4,9 +4,15 @@ version: '1.0'
 author: ClashWars
 description: ClashWars Classes plugin
 commands:
+  classes:
+    description: Main command
+    usage: /<command>
   class:
     description: Show class information
-    usage: /<command> [player]
+    usage: /<command> [class|"list"] [player]
+  abilities:
+    description: Show abilities information
+    usage: /<command> [class] [player]
   switch:
     description: Switch between classes.
     usage: /<command> [className]

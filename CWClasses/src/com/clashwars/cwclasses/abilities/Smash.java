@@ -8,7 +8,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
@@ -21,7 +20,7 @@ import com.clashwars.cwclasses.abilities.internal.Scalable;
 import com.clashwars.cwclasses.utils.CooldownManager.Cooldown;
 import com.clashwars.cwclasses.utils.Util;
 
-public class Smash implements AbilityClass,Listener {
+public class Smash implements AbilityClass {
 
 	HashMap<String, Scalable> scales = new HashMap<String, Scalable>();
 	int radius = 4;
@@ -41,10 +40,6 @@ public class Smash implements AbilityClass,Listener {
 		return "&7When using smash all entities within 4 blocks will be knocked backwards with a force of &a" + scales.get("force").getValueAtLevel(level) + "&7.";
 	}
 	@Override
-	public boolean isPassive() {
-		return true;
-	}
-	@Override
 	public HashMap<String, Scalable> getScales() {
 		return scales;
 	}
@@ -58,7 +53,7 @@ public class Smash implements AbilityClass,Listener {
 		if (event.getPlayer().isSneaking() && event.getPlayer().isBlocking()) {
 			CWPlayer cwp = CWClasses.instance.getPlayerManager().getOrCreatePlayer(event.getPlayer().getUniqueId());
 			
-			if (cwp.getActiveClass() == getType().getClassType() && cwp.getExpClass().getLevel() >= getLevel()) {
+			if (cwp.getActiveClass() == getType().getClassType() && cwp.getLevel() >= getLevel()) {
 				//Check cooldown.
 				Cooldown cd = cwp.getCDM().getCooldown("smash");
 				if (cd != null && cd.onCooldown()) {
@@ -70,7 +65,7 @@ public class Smash implements AbilityClass,Listener {
 				//Try and push back all nearby entities.
 				Vector other,cent,v;
 				cent = event.getPlayer().getLocation().toVector();
-				float force = scales.get("force").getValueAtLevel(cwp.getExpClass().getLevel()) / 10;
+				float force = scales.get("force").getValueAtLevel(cwp.getLevel()) / 10;
 				
 				int pushedBack = 0;
 				List<Entity> entities = event.getPlayer().getNearbyEntities(radius, radius, radius);
@@ -97,7 +92,7 @@ public class Smash implements AbilityClass,Listener {
 				//TODO: Sounds
 				//TODO: Particles
 				cwp.getCDM().createCooldown("smash", 30000);
-				cwp.sendMessage(Util.integrateColor(getType().getColor() + getType().getName() + "! &7Pushed back nearby entities with &a" + scales.get("force").getValueAtLevel(cwp.getExpClass().getLevel()) + " &7force!"));
+				cwp.sendMessage(Util.integrateColor(getType().getColor() + getType().getName() + "! &7Pushed back nearby entities with &a" + scales.get("force").getValueAtLevel(cwp.getLevel()) + " &7force!"));
 			}
 		}
 	}

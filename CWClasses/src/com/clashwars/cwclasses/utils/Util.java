@@ -92,4 +92,33 @@ public class Util {
 	public static boolean checkChance(int percentage) {
 		return percentage >= random(0,100);
 	}
+	
+	public static String capitalize(String s) {
+        if (s.length() == 0) return s;
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+    }
+	
+	public static double getPercentage(int smallInt, int bigInt) {
+		return ((double)(smallInt) / bigInt) * 100;
+	}
+	
+	//Get int from string
+	public static int getInt(String str) {
+		try {
+			return Integer.parseInt(str);
+		} catch (NumberFormatException e) {
+		}
+		return -1;
+	}
+
+	//Get float from string
+	public static float getFloat(String str) {
+		if (str != null && str != "") {
+			try {
+				return Float.parseFloat(str);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return -1;
+	}
 }

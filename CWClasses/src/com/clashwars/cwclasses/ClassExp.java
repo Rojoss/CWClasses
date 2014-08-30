@@ -53,12 +53,12 @@ public class ClassExp {
 
 	
 	//Calculations.
-	public void recalculate() {
+	public void recalculate(boolean checkForLvlUp) {
 		int prevLevel = level;
 		level = calculateLevel();
 		levelProgression = calculateLevelProgression();
 		expToNextLevel = calculateExpToNextLevel();
-		if (prevLevel != level) {
+		if (checkForLvlUp && prevLevel != level) {
 			//Call custom ClassLevelupEvent
 			ClassLevelupEvent e = new ClassLevelupEvent(cwp);
 			Bukkit.getServer().getPluginManager().callEvent(e);
@@ -66,7 +66,6 @@ public class ClassExp {
 	}
 	public int calculateLevel() {
 		return (int) Math.sqrt(exp / 30);
-		//return (int) Math.min(Math.max(Math.floor(expGap * Math.log(exp + offset) + defaultGap), 1), levelCap);
 	}
 
 	public double calculateLevelProgression() {
@@ -79,20 +78,19 @@ public class ClassExp {
 
 	public int calculateExpForLevel(int level) {
 		return (int) Math.ceil(Math.pow(level, 2) * 30);
-		//return (int) Math.ceil(Math.pow(Math.E, (level - defaultGap) / expGap) - offset);
 	}
 	
 	
 	//Exp edit
 	public double incrementExp(double exp) {
 		this.exp += exp;
-		recalculate();
+		recalculate(true);
 		return this.exp;
 	}
 
 	public double decrementExp(double exp) {
 		this.exp = Math.max(0, this.exp - exp);
-		recalculate();
+		recalculate(false);
 		return exp;
 	}
 
@@ -102,7 +100,7 @@ public class ClassExp {
 		}
 
 		this.exp = exp;
-		recalculate();
+		recalculate(false);
 	}
 	
 	

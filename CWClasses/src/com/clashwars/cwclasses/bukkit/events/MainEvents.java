@@ -46,7 +46,7 @@ public class MainEvents implements Listener {
 	@EventHandler
 	public void levelUp(ClassLevelupEvent event) {
 		CWPlayer cwp = event.getCWPlayer();
-		cwp.sendMessage(Util.formatMsg("&2&lLevel up!\n&aYou are now a level &2&l" + cwp.getExpClass().getLevel() + " &r" + cwp.getActiveClass().getColor() + cwp.getActiveClass().getName()) + "&a!");
+		cwp.sendMessage(Util.formatMsg("&2&lLevel up!\n&aYou are now a level &2&l" + cwp.getLevel() + " &r" + cwp.getActiveClass().getColor() + cwp.getActiveClass().getName()) + "&a!");
 		//TODO: Particles
 		//TODO: Sound
 		

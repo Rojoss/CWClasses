@@ -1,9 +1,16 @@
 package com.clashwars.cwclasses.abilities;
 
-import org.bukkit.event.Listener;
-
 import com.clashwars.cwclasses.abilities.internal.AbilityClass;
+import com.clashwars.cwclasses.abilities.internal.AbilityType;
 
-public class ShadowWalk implements AbilityClass,Listener {
+public class ShadowWalk implements AbilityClass {
 
+	@Override
+	public AbilityType getType() {
+		return AbilityType.SHADOWWALK;
+	}
+	@Override
+	public int getLevel() {
+		return 25;
+	}
 }
