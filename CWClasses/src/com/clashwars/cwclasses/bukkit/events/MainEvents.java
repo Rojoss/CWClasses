@@ -42,8 +42,8 @@ public class MainEvents implements Listener {
         			return;
         		}
         		cwp.setActiveClass(ct);
-        		cwp.getCDM().createCooldown("ClassSwitch", 3600000);
-        		p.sendMessage("&6Your new active class is now " + ct.getColor() + ct.getName() + "&6!");
+        		cwp.getCDM().createCooldown("ClassSwitch", 1800000);
+        		p.sendMessage(Util.formatMsg("&6Your new active class is now " + ct.getColor() + ct.getName() + "&6!"));
             }
         }
 	}
