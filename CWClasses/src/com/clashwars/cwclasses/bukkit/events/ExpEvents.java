@@ -12,6 +12,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import com.clashwars.cwclasses.CWClasses;
 import com.clashwars.cwclasses.classes.ClassType;
+import com.clashwars.cwclasses.utils.Util;
 
 public class ExpEvents implements Listener {
 	
@@ -69,10 +70,10 @@ public class ExpEvents implements Listener {
 		
 		//Blocking damage [Guardian]
 		if (damaged != null) {
-			if (damaged.isBlocking()) {
+			if (damaged.isBlocking() && Util.canPvP(damaged)) {
 				//XP values are doubled cuz this is called twice for some reason.
 				if (damager == null) {
-					double xp = (double)Math.min(Math.max(event.getDamage() / 25, 0.1), 0.8);
+					double xp = (double)Math.min(Math.max(event.getDamage() / 40, 0.1), 0.5);
 					cwc.getPlayerManager().addExp(damaged, xp, ClassType.GUARDIAN);
 				} else {
 					double xp = (double)Math.min(Math.max(event.getDamage() / 8, 0.5), 2.5);
