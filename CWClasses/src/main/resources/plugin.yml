@@ -1,0 +1,17 @@
+main : com.clashwars.cwclasses.CWClasses
+name: ${project.artifactId}
+version: ${project.version}
+description: ${project.description}
+commands:
+  classes:
+    description: Main command
+    usage: /<command>
+  class:
+    description: Show class information
+    usage: /<command> [class|"list"] [player]
+  abilities:
+    description: Show abilities information
+    usage: /<command> [class] [player]
+  switch:
+    description: Switch between classes.
+    usage: /<command> [className]
