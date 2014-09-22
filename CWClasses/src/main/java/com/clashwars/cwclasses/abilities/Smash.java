@@ -43,6 +43,10 @@ public class Smash extends AbilityClass {
 		return "&7When using smash all entities within 4 blocks will be knocked backwards with a force of &a" + scales.get("force").getValueAtLevel(level) + "&7.";
 	}
 
+    public String getActivationInfo() {
+        return "&7Sneak and block with a sword then left click the ground.";
+    }
+
 	public HashMap<String, Scalable> getScales() {
 		return scales;
 	}

@@ -42,6 +42,10 @@ public class PickPocket extends AbilityClass {
 		return "&7When pickpocketing you will steal a random item from the other player his inventory. You have &a" + scales.get("chance").getValueAtLevel(level) + "% &7chance to succeed. If you fail you will get poisoned.";
 	}
 
+    public String getActivationInfo() {
+        return "&7Sneak and right click a player with shears.";
+    }
+
 	public HashMap<String, Scalable> getScales() {
 		return scales;
 	}
@@ -57,6 +61,10 @@ public class PickPocket extends AbilityClass {
 		}
 		Player player = event.getPlayer();
 		Player target = (Player)event.getRightClicked();
+        if (target.hasPermission("cwclasses.nopickpocket")) {
+            player.sendMessage(Util.formatMsg("&cYou can't pickpocket this player."));
+            return;
+        }
 		if (!Util.canPvP(player) || !Util.canPvP(target)) {
 			event.getPlayer().sendMessage(Util.formatMsg(getType().getColor() + getType().getName() + " &ccan't be used here!"));
 			return;

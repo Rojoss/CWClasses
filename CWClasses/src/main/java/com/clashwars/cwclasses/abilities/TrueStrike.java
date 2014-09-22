@@ -3,6 +3,7 @@ package com.clashwars.cwclasses.abilities;
 import java.util.HashMap;
 
 import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -54,9 +55,9 @@ public class TrueStrike extends AbilityClass {
 		if (!(event.getEntity() instanceof LivingEntity)) {
 			return;
 		}
-		
+
 		LivingEntity hit = (LivingEntity)event.getEntity();
-		if (event.getDamager() instanceof Projectile) {
+		if (event.getDamager() instanceof Arrow) {
 			Projectile proj = (Projectile) event.getDamager();
 			ProjectileSource projSrc = proj.getShooter();
 			if (projSrc instanceof Player) {
